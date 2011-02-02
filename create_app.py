@@ -45,35 +45,38 @@ def main(repl, dest, templ_dir):
                 data = replace(repl, data)
             open(dest_fn, 'w').write(data)
             os.chmod(dest_fn, os.stat(source_fn)[0])
-    
-    if repl['VIRTENV'] != 'NONE':
-        HAS_VENV = bool(subprocess.Popen(['which','virtualenv'], stdout=subprocess.PIPE).communicate()[0])
-        if not HAS_VENV:
-            print "can't install a virtualenv environment. Please install virtualenv with\n  easy_install virtualenv\n\nor\n\n  pip virtualenv"
-            sys.exit(1)
 
-        HAS_VENVW = bool(subprocess.Popen(['which','virtualenvwrapper.sh'], stdout=subprocess.PIPE).communicate()[0])
-        if not HAS_VENVW:
-            print "can't install a virtualenvwrapper environment.  Please install virtualenvwrapper with\n  easy_install virtualenvwrapper\n\nor\n\n  pip virtualenvwrapper"
-            sys.exit(1)
-
-        print "Making the virtual environment (%s)..." % repl['VIRTENV']
-        create_env_cmds = [
-            'source virtualenvwrapper.sh', 
-            'cd %s' % dest,
-            'mkvirtualenv --no-site-packages --distribute %s' % repl['VIRTENV'],
-            'easy_install pip'
-            ]
-        create_pa_cmd = [
-            'source virtualenvwrapper.sh',
-            'cat > $WORKON_HOME/%s/bin/postactivate '\
-            '<<END\n#!/bin/bash/\ncd %s\nEND\n'\
-            'chmod +x $WORKON_HOME/%s/bin/postactivate' % (repl['VIRTENV'], dest,repl['VIRTENV'])
-            ]
-        subprocess.call([';'.join(create_env_cmds)], env=os.environ, executable='/bin/bash', shell=True)
-        subprocess.call([';'.join(create_pa_cmd)], env=os.environ, executable='/bin/bash', shell=True)
+    if repl['VIRTENV'] == 'NONE':
+        print "Skipping the virtual environment setup."
+        return
     
-        print "Now type: workon %s" % repl['VIRTENV']
+    HAS_VENV = bool(subprocess.Popen(['which','virtualenv'], stdout=subprocess.PIPE).communicate()[0])
+    if not HAS_VENV:
+        print "can't install a virtualenv environment. Please install virtualenv with\n  easy_install virtualenv\n\nor\n\n  pip virtualenv"
+        sys.exit(1)
+
+    HAS_VENVW = bool(subprocess.Popen(['which','virtualenvwrapper.sh'], stdout=subprocess.PIPE).communicate()[0])
+    if not HAS_VENVW:
+        print "can't install a virtualenvwrapper environment.  Please install virtualenvwrapper with\n  easy_install virtualenvwrapper\n\nor\n\n  pip virtualenvwrapper"
+        sys.exit(1)
+
+    print "Making the virtual environment (%s)..." % repl['VIRTENV']
+    create_env_cmds = [
+        'source virtualenvwrapper.sh', 
+        'cd %s' % dest,
+        'mkvirtualenv --no-site-packages --distribute %s' % repl['VIRTENV'],
+        'easy_install pip'
+        ]
+    create_pa_cmd = [
+        'source virtualenvwrapper.sh',
+        'cat > $WORKON_HOME/%s/bin/postactivate '\
+        '<<END\n#!/bin/bash/\ncd %s\nEND\n'\
+        'chmod +x $WORKON_HOME/%s/bin/postactivate' % (repl['VIRTENV'], dest,repl['VIRTENV'])
+        ]
+    subprocess.call([';'.join(create_env_cmds)], env=os.environ, executable='/bin/bash', shell=True)
+    subprocess.call([';'.join(create_pa_cmd)], env=os.environ, executable='/bin/bash', shell=True)
+    
+    print "Now type: workon %s" % repl['VIRTENV']
 
 if __name__ == '__main__':
     from optparse import OptionParser
@@ -83,7 +86,8 @@ if __name__ == '__main__':
     parser.add_option("-p", "--package", dest="pkg_name", help="The name of the installed package, like 'coolapp'.")
     parser.add_option("-v", "--VIRTENV", dest="VIRTENV", help="The name of the virtualenv.")
     parser.add_option("-d", "--dest", dest="destination", help="Where to put the new application. Relative paths are recognized.")
-    parser.add_option("-t", "--template", dest="template", help="The application template to use as a basis for the new application.")
+    parser.add_option("-t", "--template", dest="template", help="The application template to use as a basis for the new application.", default=os.path.abspath(os.path.join(os.path.dirname(__file__), 'skel')))
+    parser.add_option('--use-virtenv', dest='use_virtenv', action='store_true', default=False, help="Use a virtual env")
     (options, args) = parser.parse_args()
     
     repl = {
@@ -139,7 +143,11 @@ if __name__ == '__main__':
         repl['VIRTENV'] = options.VIRTENV
     else:
         repl['VIRTENV'] = None
-    while not repl['VIRTENV']:
-        repl['VIRTENV'] = raw_input('Virtual environment name [%s]: ' % 'NONE') or 'NONE'
+
+    if not options.use_virtenv and not repl['VIRTENV']:
+        repl['VIRTENV'] = 'NONE'
+    else:
+        while not repl['VIRTENV']:
+            repl['VIRTENV'] = raw_input('Virtual environment name [%s]: ' % repl['APP_NAME']) or repl['APP_NAME']
 
     main(repl, dest, templ_dir)
