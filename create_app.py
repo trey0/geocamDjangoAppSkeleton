@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# __NO_RELICENSE__
 
 import os, random, subprocess, sys
 
