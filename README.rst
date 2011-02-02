@@ -1,3 +1,12 @@
+
+This code repository is a very mildly patched version of the excellent django-app-skeleton_ app generator.  Our version is intended to be used by developers at NASA.  We made some boring changes so that it generates an app licensed under the NASA Open Source Agreement instead of the Apache license.
+
+.. _django-app-skeleton: https://github.com/washingtontimes/django-app-skeleton
+
+Thanks very much to Eric Florenzano, Corey Oordt, Jose Soares, Justin Quick, and Adam Patterson for creating the generator!
+
+Original README continues below:
+
 ==========================================
 Generating a Packagable Django Application
 ==========================================
@@ -7,7 +16,7 @@ The ``create_app.py`` uses several variables to replace within a "template" dire
 Running the script
 ==================
 
-The script requires that ``virtualenv`` and ``virtualenvwrapper`` are installed on your system.
+If you want to use the optional feature of creating a ``virtualenvwrapper`` environment for your app, ``virtualenv`` and ``virtualenvwrapper`` must be installed on your system.
 
 The script is interactive, although you can specify some options when you call it. Calling the script is as easy as::
 
@@ -22,7 +31,7 @@ and the script will ask you for everything it needs.
 	**Author [jcooluser]:** Johnny Cooluser
 	**Destination directory [/home/jcooluser/app-skel]:** ..
 	**Application template directory [/home/jcooluser/app-skel/skel]:**
-	**Virtual environment name [django-coolapp]:** coolapp
+	**Virtual environment name [NONE]:**
 
 You can specify some or all of the options when calling the script.
 
@@ -85,3 +94,5 @@ Corey Oordt
 Jose Soares
 Justin Quick
 Adam Patterson
+
+| __NO_RELICENSE__

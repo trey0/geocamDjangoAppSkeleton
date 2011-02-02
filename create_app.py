@@ -1,16 +1,7 @@
 #!/usr/bin/env python
+# __NO_RELICENSE__
 
 import os, random, subprocess, sys
-
-HAS_VENV = bool(subprocess.Popen(['which','virtualenv'], stdout=subprocess.PIPE).communicate()[0])
-if not HAS_VENV:
-    print "virtualenv is required to run this script. Please install it with\n  easy_install virtualenv\n\nor\n\n  pip virtualenv"
-    sys.exit(1)
-
-HAS_VENVW = bool(subprocess.Popen(['which','virtualenvwrapper.sh'], stdout=subprocess.PIPE).communicate()[0])
-if not HAS_VENVW:
-    print "virtualenvwrapper is required to run this script. Please install it with\n  easy_install virtualenvwrapper\n\nor\n\n  pip virtualenvwrapper"
-    sys.exit(1)
 
 CHARS = 'abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)'
 BLACKLIST = (
@@ -55,23 +46,34 @@ def main(repl, dest, templ_dir):
             open(dest_fn, 'w').write(data)
             os.chmod(dest_fn, os.stat(source_fn)[0])
     
-    print "Making the virtual environment (%s)..." % repl['VIRTENV']
-    create_env_cmds = [
-        'source virtualenvwrapper.sh', 
-        'cd %s' % dest,
-        'mkvirtualenv --no-site-packages --distribute %s' % repl['VIRTENV'],
-        'easy_install pip'
-    ]
-    create_pa_cmd = [
-        'source virtualenvwrapper.sh',
-        'cat > $WORKON_HOME/%s/bin/postactivate '\
-        '<<END\n#!/bin/bash/\ncd %s\nEND\n'\
-        'chmod +x $WORKON_HOME/%s/bin/postactivate' % (repl['VIRTENV'], dest,repl['VIRTENV'])
-    ]
-    subprocess.call([';'.join(create_env_cmds)], env=os.environ, executable='/bin/bash', shell=True)
-    subprocess.call([';'.join(create_pa_cmd)], env=os.environ, executable='/bin/bash', shell=True)
+    if repl['VIRTENV'] != 'NONE':
+        HAS_VENV = bool(subprocess.Popen(['which','virtualenv'], stdout=subprocess.PIPE).communicate()[0])
+        if not HAS_VENV:
+            print "can't install a virtualenv environment. Please install virtualenv with\n  easy_install virtualenv\n\nor\n\n  pip virtualenv"
+            sys.exit(1)
+
+        HAS_VENVW = bool(subprocess.Popen(['which','virtualenvwrapper.sh'], stdout=subprocess.PIPE).communicate()[0])
+        if not HAS_VENVW:
+            print "can't install a virtualenvwrapper environment.  Please install virtualenvwrapper with\n  easy_install virtualenvwrapper\n\nor\n\n  pip virtualenvwrapper"
+            sys.exit(1)
+
+        print "Making the virtual environment (%s)..." % repl['VIRTENV']
+        create_env_cmds = [
+            'source virtualenvwrapper.sh', 
+            'cd %s' % dest,
+            'mkvirtualenv --no-site-packages --distribute %s' % repl['VIRTENV'],
+            'easy_install pip'
+            ]
+        create_pa_cmd = [
+            'source virtualenvwrapper.sh',
+            'cat > $WORKON_HOME/%s/bin/postactivate '\
+            '<<END\n#!/bin/bash/\ncd %s\nEND\n'\
+            'chmod +x $WORKON_HOME/%s/bin/postactivate' % (repl['VIRTENV'], dest,repl['VIRTENV'])
+            ]
+        subprocess.call([';'.join(create_env_cmds)], env=os.environ, executable='/bin/bash', shell=True)
+        subprocess.call([';'.join(create_pa_cmd)], env=os.environ, executable='/bin/bash', shell=True)
     
-    print "Now type: workon %s" % repl['VIRTENV']
+        print "Now type: workon %s" % repl['VIRTENV']
 
 if __name__ == '__main__':
     from optparse import OptionParser
@@ -111,7 +113,7 @@ if __name__ == '__main__':
     if options.author:
         repl['AUTHOR'] = options.author
     while not repl['AUTHOR']:
-        repl['AUTHOR'] = raw_input('Author [%s]:' % cur_user) or cur_user
+        repl['AUTHOR'] = raw_input('Author [%s]: ' % cur_user) or cur_user
     
     repl['SECRET_KEY'] = ''.join([random.choice(CHARS) for i in xrange(50)])
     
@@ -138,6 +140,6 @@ if __name__ == '__main__':
     else:
         repl['VIRTENV'] = None
     while not repl['VIRTENV']:
-        repl['VIRTENV'] = raw_input('Virtual environment name [%s]: ' % repl['APP_NAME']) or repl['APP_NAME']
+        repl['VIRTENV'] = raw_input('Virtual environment name [%s]: ' % 'NONE') or 'NONE'
 
     main(repl, dest, templ_dir)
