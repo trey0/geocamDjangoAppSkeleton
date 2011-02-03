@@ -36,7 +36,6 @@ my %comment = (
     ".java" => "//",
     ".aidl" => "//",
     ".xml" => "<!--,-->",
-    ".txt" => "#",
 );
 
 my %atEnd = (
