@@ -5,5 +5,5 @@ recursive-include $$$$PKG_NAME$$$$/media *
 recursive-include $$$$PKG_NAME$$$$/templates *
 
 include LICENSE
-include README
+include README.rst
 include *.txt
