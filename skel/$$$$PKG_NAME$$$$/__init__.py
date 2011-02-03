@@ -7,6 +7,12 @@
 """
 $$$$APP_NAME$$$$
 """
+
+import django.conf
+from geocamUtil.MultiSettings import MultiSettings
+
+import defaultSettings
+
 __version_info__ = {
     'major': 0,
     'minor': 1,
@@ -28,3 +34,5 @@ def get_version():
     return ''.join(vers)
 
 __version__ = get_version()
+
+settings = MultiSettings(django.conf.settings, defaultSettings)
