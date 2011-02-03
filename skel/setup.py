@@ -31,7 +31,7 @@ setup(
     include_package_data = True,
     install_requires=read_file('requirements.txt'),
     classifiers = [
-        'License :: OSI Approved :: Apache Software License',
+        'License :: OSI Approved :: NASA Open Source Agreement',
         'Framework :: Django',
     ],
 )
