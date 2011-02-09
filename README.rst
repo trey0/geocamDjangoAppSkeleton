@@ -3,6 +3,10 @@ This code repository is a very mildly patched version of the excellent django-ap
 
 .. _django-app-skeleton: https://github.com/washingtontimes/django-app-skeleton
 
+You can view the `install directions`_.
+
+.. _install directions: https://github.com/geocam/geocamDjangoAppSkeleton/blob/master/install.rst
+
 Thanks very much to Eric Florenzano, Corey Oordt, Jose Soares, Justin Quick, and Adam Patterson for creating the generator!
 
 Original README continues below:
