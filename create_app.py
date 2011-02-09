@@ -21,6 +21,12 @@ def replace(repl, text):
         text = text.replace('$$$$%s$$$$' % (key,), value)
     return text
 
+def gen_secret():
+    """ Generate a site key in the same manner Django does for the settings in
+    the example app. Shamelessly copied from startproject.py in the django 
+    source. """
+    return ''.join([random.choice('abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)') for i in range(50)])
+
 def main(repl, dest, templ_dir):
     try:
         os.makedirs(dest)
@@ -94,6 +100,7 @@ if __name__ == '__main__':
         'APP_NAME': None,
         'PKG_NAME': None,
         'AUTHOR': None,
+        'SITE_SECRET': gen_secret()
     }
     dest_dir = None
     templ_dir = None
