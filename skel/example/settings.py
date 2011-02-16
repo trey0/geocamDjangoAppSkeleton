@@ -14,7 +14,7 @@ PROJ_ROOT = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(APP)
 
 ADMINS = (
-    # ('$$$$AUTHOR$$$$', 'your_email@domain.com'),
+    # ('Your Name', 'your_email@domain.com'),
 )
 
 MANAGERS = ADMINS
