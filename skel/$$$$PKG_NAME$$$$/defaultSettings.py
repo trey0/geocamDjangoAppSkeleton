@@ -18,7 +18,7 @@ override it in the site-level settings module, like this:
 
 Other modules can access the value of FOO like this:
 
-  from $$$$APP_NAME$$$$ import settings
+  from $$$$PKG_NAME$$$$ import settings
   print settings.FOO
 
 Don't try to get the value of FOO from django.conf.settings.  That
